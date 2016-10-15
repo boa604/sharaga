@@ -93,7 +93,7 @@ void main() {
     
     int  nEXIT         = 0;
     char sCOMMAND[250] = "";
-    
+    printf("AAAAAAAAAAAAAAAAAAAAA");
     do {
       WRITELEFT();
       fgets(sCOMMAND, sizeof(sCOMMAND) , stdin);
