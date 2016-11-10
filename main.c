@@ -372,6 +372,120 @@ int DELETE(char* sCOMMAND) {
     }
 }
 
+int SAVE(char* sCOMMAND) {
+    char*         sPARAMS[200];
+    struct TLIST* stPRODUCTS     = PRODUCTS;
+    char          sFILEFORMAT[5] = "";
+    
+    for (int a = 0; a < 200; a++) {
+        strcpy(sPARAMS[a], "");
+    }
+    
+    if (SEPCOMMAND(sCOMMAND, sPARAMS) == 1) {
+        
+        sFILEFORMAT[0] = sPARAMS[0][strlen(sPARAMS[0]) - 4];
+        sFILEFORMAT[1] = sPARAMS[0][strlen(sPARAMS[0]) - 3];
+        sFILEFORMAT[2] = sPARAMS[0][strlen(sPARAMS[0]) - 2];
+        sFILEFORMAT[3] = sPARAMS[0][strlen(sPARAMS[0]) - 1];
+        sFILEFORMAT[4] = '\0';
+        if (strcmp(sFILEFORMAT, ".txt") != 0) {
+            printf("Запись в файл производится только в текстовый (.txt) файл");
+            return 0;
+        }
+        
+        FILE *fp;
+        
+        if (fp = fopen(sPARAMS[0], "w") != NULL) {
+            
+          while (stPRODUCTS != NULL) {
+            if (fprintf(fp, "%s", stPRODUCTS->PRODUCT.PRODUCT_NAME) < 0) {
+                return 0;
+            };
+            if (fprintf(fp, "%s", stPRODUCTS->PRODUCT.CATEGORY) < 0) {
+                return 0;
+            };
+            if (fprintf(fp, "%f", stPRODUCTS->PRODUCT.PRICE) < 0) {
+                return 0;
+            };
+            if (fprintf(fp, "%s", stPRODUCTS->PRODUCT.NOTE) < 0) {
+                return 0;
+            };
+            stPRODUCTS = stPRODUCTS->next;
+          }
+        } else {
+          return 0;
+        }
+        
+        if (fclose(fp) == 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int LOAD(char* sCOMMAND) {
+    char*         sPARAMS[200];
+    struct TSHOP  stSHOP;
+    char          sFILEFORMAT[5] = "";
+    
+    for (int a = 0; a < 200; a++) {
+        strcpy(sPARAMS[a], "");
+    }
+    
+    if (SEPCOMMAND(sCOMMAND, sPARAMS) == 1) {
+        
+        sFILEFORMAT[0] = sPARAMS[0][strlen(sPARAMS[0]) - 4];
+        sFILEFORMAT[1] = sPARAMS[0][strlen(sPARAMS[0]) - 3];
+        sFILEFORMAT[2] = sPARAMS[0][strlen(sPARAMS[0]) - 2];
+        sFILEFORMAT[3] = sPARAMS[0][strlen(sPARAMS[0]) - 1];
+        sFILEFORMAT[4] = '\0';
+        if (strcmp(sFILEFORMAT, ".txt") != 0) {
+            printf("Чтенение из файла производится только из текстового (.txt) файла");
+            return 0;
+        }
+        
+        FILE *fp;
+        
+        if (fp = fopen(sPARAMS[0], "r") != NULL) {
+            
+          while (feof(fp) == 0) {
+            if (fscanf(fp, "%s", stSHOP.PRODUCT_NAME) == 0 || feof(fp) != 0) {
+                return 0;
+            };
+            if (fscanf(fp, "%s", stSHOP.CATEGORY) == 0 || feof(fp) != 0) {
+                return 0;
+            };
+            if (fscanf(fp, "%f", stSHOP.PRICE) == 0 || feof(fp) != 0) {
+                return 0;
+            };
+            if (fscanf(fp, "%s", stSHOP.NOTE) == 0 || feof(fp) != 0) {
+                return 0;
+            };
+            if (BASE_INSERT(stSHOP) == 0) {
+                return 0;
+            };
+          }
+        } else {
+          return 0;
+        }
+        
+        if (fclose(fp) == 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 void main() {
 
     char s[100]    = "";
@@ -403,13 +517,37 @@ void main() {
       {
         TREATCOMMAND(sCOMMAND, s);
         if (strcmp(s, "add") == 0) {
-            INSERT(sCOMMAND);
+            if (INSERT(sCOMMAND) == 1) {
+                printf("\nДобавление прошло успешно\n");
+            } else {
+                printf("\nДобавление не получилось");
+            }
         } else if (strcmp(s, "update") == 0) {
-            UPDATE(sCOMMAND);
+            if (UPDATE(sCOMMAND) == 1) {
+                printf("\nИсправление прошло успешно\n");
+            } else {
+                printf("\nИсправление не получилось");
+            }
         } else if (strcmp(s, "remove") == 0) {
-            DELETE(sCOMMAND);
+            if (DELETE(sCOMMAND) == 1) {
+                printf("\nУдаление прошло успешно\n");
+            } else {
+                printf("\nУдаление не получилось");
+            }
         } else if (strcmp(s, "show") == 0) {
             SHOWDATA();
+        } else if (strcmp(s, "save") == 0) {
+            if (SAVE(sCOMMAND) == 1) {
+                printf("\nЗапись в файл прошла успешна\n");
+            } else {
+                printf("\nЗапись в файл не получилась");
+            }
+        } else if (strcmp(s, "load") == 0) {
+            if (LOAD(sCOMMAND) == 1) {
+                printf("\nЧтение из файла прошло успешно\n");
+            } else {
+                printf("\nЧтенение из файла не получилось");
+            }
         }
       }
       printf("%s -- %s\n", s, sCOMMAND);
