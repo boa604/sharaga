@@ -1,0 +1,16 @@
+all: products
+
+products: main.o base_functions.o main_functions.o
+	  gcc -std=c99 main.o base_functions.o main_functions.o -o products
+
+main.o: main.c functions.h
+	gcc -std=c99 -c main.c
+
+base_functions.o: base_functions.c functions.h
+	gcc -std=c99 -c base_functions.c
+
+main_functions.o: main_functions.c functions.h
+	gcc -std=c99 -c main_functions.c
+
+clean:
+	rm -rf *.o products
