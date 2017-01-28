@@ -1,16 +1,16 @@
 all: products
 
 products: main.o base_functions.o main_functions.o 
-	  gcc -std=c99 main.o base_functions.o main_functions.o  -o products
+	  gcc -std=c99 -g -ggdb main.o base_functions.o main_functions.o  -o products
 
 main.o: main.c functions.h
-	gcc -std=c99 -c main.c
+	gcc -std=c99 -c -g -ggdb main.c
 
 base_functions.o: base_functions.c functions.h
-	gcc -std=c99 -c base_functions.c
+	gcc -std=c99 -c -g -ggdb base_functions.c
 
 main_functions.o: main_functions.c functions.h
-	gcc -std=c99 -c main_functions.c
+	gcc -std=c99 -c -g -ggdb main_functions.c
 	
 test: test.c functions.h
 	gcc -o test -std=c99 `pkg-config --libs --cflags check` test.c base_functions.c
